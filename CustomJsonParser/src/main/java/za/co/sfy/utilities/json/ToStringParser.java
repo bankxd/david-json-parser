@@ -234,7 +234,7 @@ public class ToStringParser {
 	@SuppressWarnings("unchecked")
 	private String objectDecoder(HashMap<List<String>, List<Object>> map, String methodName,
 			Object classInstanceToStringify) {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(); 
 		try {
 			for (Object mapValues : map.values()) {
 				for (Object valueObject : (List<Object>) mapValues) {

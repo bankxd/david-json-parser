@@ -3,17 +3,24 @@ package za.co.sfy.utilities.json;
 import java.lang.reflect.*;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+
+import com.google.gson.Gson;
+
+import za.co.sfy.domain.Address;
+import za.co.sfy.domain.Person;
+
 import java.util.*;
 import java.util.Map.Entry;
 
 public class ToObjectParser {
-	
+
 	@Test
 	public Object parseStringToObject(String json, Class<?> jsonClass) {
+		AbstractFactory factory = FactoryProvider.getFactory();
 		HashMap<String, String> mapifyO1 = mapify(getOuterObject(json));
 		Object objInst = null;
 		try {
-			objInst = jsonClass.newInstance();
+			objInst = factory.getObject(jsonClass);
 			for (Field field : objInst.getClass().getDeclaredFields()) {
 				field.setAccessible(true);
 				Class<?> type = field.getType();
@@ -26,12 +33,12 @@ public class ToObjectParser {
 					break;
 				case "interface java.util.List":
 					if (json.contains(":[") && json != null) {
-						List<?> listInst = new ArrayList<>();
+						List<?> listInst = factory.getList();
 						Method add = listInst.getClass().getDeclaredMethod("add", Object.class);
 						if (json.contains("},{") && json != null) {
 							int countMatches = StringUtils.countMatches(json, "},{");
 							for (int h = 0; h < (countMatches + 1); h++) {
-								Object newInstance = jsonClass.newInstance();
+								Object newInstance = factory.getObject(jsonClass);
 								setInnerListObject(newInstance, getListObjectObject(json, h), getListObject(json, h),
 										json);
 								add.invoke(listInst, newInstance);
@@ -41,15 +48,15 @@ public class ToObjectParser {
 					}
 					break;
 				default:
-					List<String> innerObject = stripString(json);
+					List<String> innerObject = new ToObjectParser().stripString(json);
 					String innerObjP = innerObject.get(1);
-					HashMap<String, String> mapifyOO1 = mapify(innerObjP);
+					HashMap<String, String> mapifyOO1 = new ToObjectParser().mapify(innerObjP);
 					setInnerObject(json, field, objInst, mapifyOO1);
 					break;
 				}
 			}
-		} catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
-				| NoSuchMethodException | InvocationTargetException e) {
+		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException
+				| InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return objInst;
@@ -260,17 +267,21 @@ public class ToObjectParser {
 		}
 		return hmap;
 	}
-}
 
-//public static void main(String[] args) {
-//	Address address5 = new Address(5, "Westwood Drive", "JHB");
-//	Address address2 = new Address(2, "4th Ave", "CPT");
-//	List<Person> children1 = new ArrayList<Person>();
-//	List<Person> children2 = new ArrayList<Person>();
-//	List<Person> children3 = new ArrayList<Person>();
-//	Person child1 = new Person(2, "Kelly", "Pan", address2, children2);
-//	Person child2 = new Person(3, "Roger", "Pan", address5, children3);
-//	children1.add(child1);
-//	children1.add(child2);
-//	Person person1 = new Person(1, "Peter", "Pan", address2, children1);
-//}
+	public static void main(String[] args) {
+		Address address5 = new Address(5, "Westwood Drive", "JHB");
+		Address address2 = new Address(2, "4th Ave", "CPT");
+		List<Person> children1 = new ArrayList<Person>();
+		List<Person> children2 = new ArrayList<Person>();
+		List<Person> children3 = new ArrayList<Person>();
+		Person child1 = new Person(2, "Kelly", "Pan", address2, children2);
+		Person child2 = new Person(3, "Roger", "Pan", address5, children3);
+		children1.add(child1);
+		children1.add(child2);
+		Person person1 = new Person(1, "Peter", "Pan", address2, children1);
+
+		Object parseStringToObject = new ToObjectParser().parseStringToObject(new Gson().toJson(person1),
+				person1.getClass());
+		System.out.println("ss");
+	}
+}
