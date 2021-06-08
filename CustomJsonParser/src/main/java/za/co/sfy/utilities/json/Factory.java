@@ -1,14 +1,7 @@
 package za.co.sfy.utilities.json;
 
-import java.util.*;
-
-abstract class JsonObjectA {
-
-}
-
-class JsonObject extends JsonObjectA {
-	
-}
+import java.util.ArrayList;
+import java.util.List;
 
 abstract class AbstractFactory {
 
@@ -36,10 +29,11 @@ class ObjectFactorySFY extends AbstractFactory {
 		List<?> list = new ArrayList<>();
 		return list;
 	}
-}
+} 
 
 class FactoryProvider {
 	public static AbstractFactory getFactory() {
 		return new ObjectFactorySFY();
 	}
 }
+

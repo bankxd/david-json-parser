@@ -1,12 +1,16 @@
 package za.co.sfy.utilities.json;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+
 import com.google.gson.Gson;
+
 import za.co.sfy.domain.Address;
 import za.co.sfy.domain.Person;
 
@@ -86,7 +90,7 @@ class ToObjectParserTest {
 		json3 = new ToStringParser().parseObjectToString(address5);
 		addressTest = (Address) new ToObjectParser().parseStringToObject(json3, address5.getClass());
 		// *********************************************************************
-	}
+	} 
 
 	@Test
 	void test1() {
